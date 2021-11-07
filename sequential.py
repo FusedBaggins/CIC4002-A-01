@@ -36,17 +36,37 @@ class Sequential:
         return re.compile(r'(\+)+').split(line.decode('latin-1'))[-1]
 
     @staticmethod
-    def __read_byte__(file, seek):
+    def __read_byte__(file):
         c = ''
         while byte := file.read(1):
             b = byte.decode('latin-1')
             if b == ' ':
-                file.seek(seek, 0)
                 break
             elif b != '+' and b != ' ':
                 c += b
+        c = c.split("-")
+        return [int(number) for number in c]
 
-        return c
+    def __linear_search__(self, line, code):
+        positions = [int(number) for number in line.split(' ')[1:]]
+
+        with open('./files/data.bin', 'rb') as file:
+            find = False
+            for position in positions:
+                file.seek(position, 0)
+                values = self.__serialize_line__(file.readline()).replace('\n', '').split(';')
+
+                if int(values[0]) == code:
+                    find = True
+                    print("\nFound it!")
+                    print(
+                        '{',
+                        f'id: {values[0]}, Living Place: {values[1]}, Gender: {values[3]}, Age: {values[4]}, Years coding: {values[2]}',
+                        '}')
+                    break
+
+            if not find:
+                print(f'None register found with code {code}. :(')
 
     def create(self, file, line_size):
         curr = 0
@@ -66,7 +86,7 @@ class Sequential:
                     positions.append(str(curr))
                 else:
                     merged = " ".join(positions)
-                    merged = f'{first} {merged}\n'
+                    merged = f'{first}-{code} {merged}\n'
                     temp.write(bytes(merged, 'latin-1'))
 
                     positions = [str(curr)]
@@ -89,28 +109,33 @@ class Sequential:
     def search(self, code):
         with open('./files/index_01.bin', 'rb') as index_f:
             low = mid = 0
+            find = False
             high = index_f.seek(0, io.SEEK_END) // self.index_line
+
             while low <= high:
 
                 mid = ((high + low) // 2)
                 index_f.seek(mid * self.index_line, 0)
+                range_codes = self.__read_byte__(index_f)
 
-                c = self.__read_byte__(index_f, mid)
+                # reset cursor
+                index_f.seek(mid * self.index_line, 0)
 
-                if c < code:
+                if range_codes[0] < code < range_codes[1]:
+                    find = True
+                    self.__linear_search__(self.__serialize_line__(index_f.readline()).replace('\n', ''), code)
+                    break
+
+                if range_codes[0] < code:
                     low = mid + 1
 
-                elif c > code:
-                    temp = (((high + low) // 2) + 1)
-                    index_f.seek(temp * self.index_line, 0)
-                    next_c = self.__read_byte__(index_f, mid)
-
-                    if next_c > code:
-                        print(c, next_c)
-                        break
-
+                elif range_codes[0] > code:
                     high = mid - 1
+
                 else:
-                    print("oiii")
-                    pass
-            # print(, self.index_line)
+                    find = True
+                    self.__linear_search__(self.__serialize_line__(index_f.readline()).replace('\n', ''), code)
+                    break
+
+            if not find:
+                print(f"I can't find any register with code {code}")
