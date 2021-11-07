@@ -5,8 +5,8 @@ from pathlib import Path
 # third-party
 import pandas as pd
 
-from btree import BTree
 from hash import Hash
+from btree import BTree
 from sequential import Sequential
 
 
@@ -22,18 +22,17 @@ def menu(file_handler):
     choice = int(input("\nYour option: "))
 
     if choice == 1:
-        file_handler.sequential.search(input('Please, text id: '))
+        file_handler.sequential.search(int(input('Please, text id: ')))
         pass
     elif choice == 2:
         pass
     elif choice == 3:
-        file_handler.hash.search(f'{file_handler.file_path}data.bin', input('Please, text key: '))
+        file_handler.hash.search(f'{file_handler.file_path}data.bin')
         pass
     elif choice == 4:
         key = input("Please, text key: ")
-        a = file_handler.btree.values.search(key, file_handler.file_path, False)
-        print(a)
-        pass
+        print(file_handler.btree.values.search(key, False))
+
     elif choice == 5:
         print("This section shows some analysis about data. This analysis uses hash and btree indexes.")
         # print("Hash Analysis")
