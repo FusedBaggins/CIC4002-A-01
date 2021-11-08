@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 
@@ -34,11 +33,14 @@ def menu(file_handler):
         print(file_handler.btree.values.search(key, False))
 
     elif choice == 5:
-        print("This section shows some analysis about data. This analysis uses hash and btree indexes.")
-        # print("Hash Analysis")
-        # file_handler.hash.print_analytics()
+        print("This section shows some questions about data.\n")
+        print("1. How many brazilians answer the SO Survey?")
+        file_handler.btree.values.search('Brazil', True)
 
-        file_handler.btree.analytics()
+        file_handler.btree.values.set_max_node(file_handler.btree)
+        print("\n2. Which country answered the most to the survey?")
+        print(f'Country: {file_handler.btree.max_node[0]} - {file_handler.btree.max_node[1]}')
+
     elif choice == 6:
         sys.exit(0)
 
