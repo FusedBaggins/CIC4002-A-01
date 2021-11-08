@@ -24,6 +24,7 @@ def menu(file_handler):
         file_handler.sequential.search(int(input('Please, text id: ')))
         pass
     elif choice == 2:
+        print("Ooops! There's nothing here. :D")
         pass
     elif choice == 3:
         file_handler.hash.search(f'{file_handler.file_path}data.bin')
