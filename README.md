@@ -1,5 +1,5 @@
 # CIC4002-A-01
-####Projeto desenvolvido no ano de 2021 para disciplina de <b> Algoritmo e Estrutura de dados 2</b>.
+#### Projeto desenvolvido no ano de 2021 para disciplina de <b> Algoritmo e Estrutura de dados 2</b>.
 <hr>
 
 Para o desenvolvimento deste projeto fora utilizado um dataset com aproximadamente 100K linhas.
