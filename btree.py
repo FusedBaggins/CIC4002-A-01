@@ -22,6 +22,18 @@ class Node:
             f'id: {values[0]}, Living Place: {values[1]}, Gender: {values[3]}, Age: {values[4]}, Years coding: {values[2]}',
             '}')
 
+    def set_max_node(self, btree):
+        if not btree.max_node:
+            btree.max_node = (self.key, len(self.positions))
+
+        condition = len(self.positions) > btree.max_node[1]
+        btree.max_node = (self.key, len(self.positions)) if condition else btree.max_node
+
+        if self.left:
+            self.left.set_max_node(btree)
+        if self.right:
+            self.right.set_max_node(btree)
+
     def insert(self, key, position):
         if self.key:
             if key < self.key:
@@ -40,28 +52,29 @@ class Node:
             self.key = key
             self.positions = [position]
 
-    def search(self, key, file_path, analytics=False):
+    def search(self, key, analytics=False):
         if self.key == key:
-            print(f"WOW!!! I found {len(self.positions)} register with this key.")
-            input("I'll show only 500 lines, ok? Press enter to print the lines.\n")
             if not analytics:
-                with open(f'{file_path}data.bin', 'rb') as file:
+                print(f"WOW!!! I found {len(self.positions)} register with this key.")
+                input("I'll show only 500 lines, ok? Press enter to print the lines.\n")
+
+                with open('./files/data.bin', 'rb') as file:
                     for position in self.positions:
                         file.seek(position, 0)
                         self.__print_line__(file.readline())
             else:
-                print("Opa")
+                print(len(self.positions))
         else:
             if self.left:
-                self.left.search(key, file_path)
+                self.left.search(key, analytics)
             if self.right:
-                self.right.search(key, file_path)
+                self.right.search(key, analytics)
 
 
 class BTree:
     def __init__(self, file, line_size):
         self.values = None
-        self.analytics = {}
+        self.max_node = None
 
         if not line_size:
             file.seek(0, 0)
@@ -77,10 +90,6 @@ class BTree:
     @staticmethod
     def __serialize_line__(line):
         return re.compile(r'(\+)+').split(line.decode('latin-1'))[-1]
-
-    def __analytics__(self):
-        obj = {'items': 0}
-        self.values.read(obj)
 
     def create(self, file, line_size):
         curr = 0
