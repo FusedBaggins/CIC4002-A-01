@@ -27,7 +27,7 @@ def menu(file_handler):
         print("Ooops! There's nothing here. :D")
         pass
     elif choice == 3:
-        file_handler.hash.search(f'{file_handler.file_path}data.bin')
+        file_handler.hash.search(f'{file_handler.file_path}data.bin', input('Please, text key: '))
         pass
     elif choice == 4:
         key = input("Please, text key: ")
